@@ -101,6 +101,12 @@ class RESTServer:
         self._urls.append(Entry(compiled, method, handler,
                                 check_cors, cors_options))
 
+    def route(self, path, *, method='GET'):
+        def decorator(f):
+            self.add_url(method, path, f)
+            return f
+        return decorator
+
     @asyncio.coroutine
     def dispatch(self, request):
         path = request.path
