@@ -25,17 +25,15 @@ class SessionFactoryTests(unittest.TestCase):
 
         factory = create_session_factory(self.dummy_sid, self.dummy_storage)
         self.assertIsInstance(factory, _SessionFactory)
-        self.assertIs(factory._loop, self.loop)
 
     def test_asserts(self):
         with self.assertRaises(AssertionError):
-            create_session_factory(None, self.dummy_storage, loop=self.loop)
+            create_session_factory(None, self.dummy_storage)
         with self.assertRaises(AssertionError):
-            create_session_factory(self.dummy_sid, None, loop=self.loop)
+            create_session_factory(self.dummy_sid, None)
 
     def test_create_new_session(self):
-        factory = create_session_factory(self.dummy_sid, self.dummy_storage,
-                                         loop=self.loop)
+        factory = create_session_factory(self.dummy_sid, self.dummy_storage)
 
         @asyncio.coroutine
         def load(session_id):
@@ -48,7 +46,7 @@ class SessionFactoryTests(unittest.TestCase):
             waiter = asyncio.Future(loop=self.loop)
             req = mock.Mock()
 
-            factory(req, waiter)
+            factory(req, waiter, loop=self.loop)
 
             sess = yield from asyncio.wait_for(waiter, timeout=1,
                                                loop=self.loop)
@@ -64,8 +62,7 @@ class SessionFactoryTests(unittest.TestCase):
         self.dummy_storage.save_session_data.assert_call_count(0)
 
     def test_load_existing_session(self):
-        factory = create_session_factory(self.dummy_sid, self.dummy_storage,
-                                         loop=self.loop)
+        factory = create_session_factory(self.dummy_sid, self.dummy_storage)
         request = mock.Mock()
 
         self.dummy_sid.get_session_id.return_value = 123
@@ -80,7 +77,7 @@ class SessionFactoryTests(unittest.TestCase):
         @asyncio.coroutine
         def go():
             waiter = asyncio.Future(loop=self.loop)
-            factory(request, waiter)
+            factory(request, waiter, loop=self.loop)
             sess = yield from asyncio.wait_for(waiter, timeout=1,
                                                loop=self.loop)
 
@@ -93,8 +90,7 @@ class SessionFactoryTests(unittest.TestCase):
         self.dummy_storage.save_session_data.assert_call_count(0)
 
     def test_load_and_save(self):
-        factory = create_session_factory(self.dummy_sid, self.dummy_storage,
-                                         loop=self.loop)
+        factory = create_session_factory(self.dummy_sid, self.dummy_storage)
 
         @asyncio.coroutine
         def load(session_id):
@@ -112,7 +108,7 @@ class SessionFactoryTests(unittest.TestCase):
             waiter = asyncio.Future(loop=self.loop)
             req = mock.Mock()
 
-            factory(req, waiter)
+            factory(req, waiter, loop=self.loop)
 
             sess = yield from asyncio.wait_for(waiter, timeout=1,
                                                loop=self.loop)

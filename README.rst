@@ -50,14 +50,13 @@ Simple REST server can be run like this::
 
 
    loop = asyncio.get_event_loop()
-   server = aiorest.RESTServer(hostname='127.0.0.1',
-                               loop=loop)
+   server = aiorest.RESTServer(hostname='127.0.0.1')
 
    # configure routes
    server.add_url('GET', '/hello', hello)
    # create server
    srv = loop.run_until_complete(loop.create_server(
-       server.make_handler, '127.0.0.1', 8080))
+       server.make_handler(loop=loop), '127.0.0.1', 8080))
 
 
    @asyncio.coroutine

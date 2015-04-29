@@ -82,7 +82,7 @@ class ServerTests(unittest.TestCase):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(None)
         self.server = RESTServer(debug=True, keep_alive=75,
-                                 hostname='127.0.0.1', loop=self.loop)
+                                 hostname='127.0.0.1')
         self.port = None
         rest = REST(self)
         self.server.add_url('POST', '/post/{id}', rest.func_POST)
@@ -98,7 +98,7 @@ class ServerTests(unittest.TestCase):
 
     def test_simple_POST(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123'.format(port)
@@ -119,9 +119,9 @@ class ServerTests(unittest.TestCase):
         self.loop.run_until_complete(srv.wait_closed())
 
     def test_simple_GET(self):
-        srv = self.loop.run_until_complete(self.loop.create_server(
-                                           self.server.make_handler,
-                                           '127.0.0.1', 0))
+        srv = self.loop.run_until_complete(
+            self.loop.create_server(self.server.make_handler(loop=self.loop),
+                                    '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123'.format(port)
 
@@ -138,7 +138,7 @@ class ServerTests(unittest.TestCase):
 
     def test_GET_with_query_string(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123/2?a=1&b=2'.format(port)
@@ -159,7 +159,7 @@ class ServerTests(unittest.TestCase):
 
     def test_set_cookie(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/cookie/123'.format(port)
@@ -179,7 +179,7 @@ class ServerTests(unittest.TestCase):
 
     def test_get_cookie(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/get_cookie/'.format(port)
@@ -203,7 +203,7 @@ class ServerTests(unittest.TestCase):
 
     def test_accept_encoding__deflate(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123'.format(port)
@@ -224,7 +224,7 @@ class ServerTests(unittest.TestCase):
 
     def test_accept_encoding__gzip(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123'.format(port)
@@ -245,7 +245,7 @@ class ServerTests(unittest.TestCase):
 
     def test_POST_without_body(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123'.format(port)
@@ -270,7 +270,7 @@ class ServerTests(unittest.TestCase):
 
     def test_POST_malformed_json(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123'.format(port)
@@ -295,7 +295,7 @@ class ServerTests(unittest.TestCase):
 
     def test_POST_nonutf8_json(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/post/123'.format(port)
@@ -320,7 +320,7 @@ class ServerTests(unittest.TestCase):
 
     def test_status_code(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/create'.format(port)
@@ -341,7 +341,7 @@ class ServerTests(unittest.TestCase):
 
     def test_no_session(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/check/no/session'.format(port)

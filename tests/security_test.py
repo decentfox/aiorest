@@ -55,7 +55,7 @@ class ServerTests(unittest.TestCase):
         asyncio.set_event_loop(None)
         auth_policy = DictionaryAuthorizationPolicy({'chris': ('read',)})
         self.server = RESTServer(debug=True, keep_alive=75,
-                                 hostname='127.0.0.1', loop=self.loop,
+                                 hostname='127.0.0.1',
                                  identity_policy=CookieIdentityPolicy(),
                                  auth_policy=auth_policy)
         self.port = None
@@ -66,9 +66,9 @@ class ServerTests(unittest.TestCase):
         self.loop.close()
 
     def test_identity_missing(self):
-        srv = self.loop.run_until_complete(self.loop.create_server(
-                                           self.server.make_handler,
-                                           '127.0.0.1', 0))
+        srv = self.loop.run_until_complete(
+            self.loop.create_server(self.server.make_handler(loop=self.loop),
+                                    '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/auth'.format(port)
 
@@ -87,9 +87,9 @@ class ServerTests(unittest.TestCase):
         self.loop.run_until_complete(srv.wait_closed())
 
     def test_user_missing(self):
-        srv = self.loop.run_until_complete(self.loop.create_server(
-                                           self.server.make_handler,
-                                           '127.0.0.1', 0))
+        srv = self.loop.run_until_complete(
+            self.loop.create_server(self.server.make_handler(loop=self.loop),
+                                    '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/auth'.format(port)
 
@@ -108,9 +108,9 @@ class ServerTests(unittest.TestCase):
         self.loop.run_until_complete(srv.wait_closed())
 
     def test_permission_missing(self):
-        srv = self.loop.run_until_complete(self.loop.create_server(
-                                           self.server.make_handler,
-                                           '127.0.0.1', 0))
+        srv = self.loop.run_until_complete(
+            self.loop.create_server(self.server.make_handler(loop=self.loop),
+                                    '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/auth'.format(port)
 
@@ -129,9 +129,9 @@ class ServerTests(unittest.TestCase):
         self.loop.run_until_complete(srv.wait_closed())
 
     def test_permission_present(self):
-        srv = self.loop.run_until_complete(self.loop.create_server(
-                                           self.server.make_handler,
-                                           '127.0.0.1', 0))
+        srv = self.loop.run_until_complete(
+            self.loop.create_server(self.server.make_handler(loop=self.loop),
+                                    '127.0.0.1', 0))
         self.port = port = server_port(srv)
         url = 'http://127.0.0.1:{}/auth'.format(port)
 

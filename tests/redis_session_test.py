@@ -26,8 +26,7 @@ class RedisSessionTests(unittest.TestCase):
         self.loop.close()
 
     def test_load_empty(self):
-        factory = RedisSessionFactory(self.redis_pool, 'secret', 'test',
-                                      loop=self.loop)
+        factory = RedisSessionFactory(self.redis_pool, 'secret', 'test')
 
         sid_store = factory._sid_store
         req = mock.Mock()
@@ -36,7 +35,7 @@ class RedisSessionTests(unittest.TestCase):
         @asyncio.coroutine
         def run():
             fut = asyncio.Future(loop=self.loop)
-            factory(req, fut)
+            factory(req, fut, loop=self.loop)
             sess = yield from fut
             self.assertEqual(sess, {})
             self.assertTrue(sess.new)
@@ -44,8 +43,7 @@ class RedisSessionTests(unittest.TestCase):
         self.loop.run_until_complete(run())
 
     def test_load_existent(self):
-        factory = RedisSessionFactory(self.redis_pool, 'secret', 'test',
-                                      loop=self.loop)
+        factory = RedisSessionFactory(self.redis_pool, 'secret', 'test')
         sid_store = factory._sid_store
         req = mock.Mock()
         req.cookies.get.return_value = sid_store._encode_cookie('123')
@@ -59,7 +57,7 @@ class RedisSessionTests(unittest.TestCase):
                 ok = yield from redis.set(key, data)
                 self.assertTrue(ok)
             fut = asyncio.Future(loop=self.loop)
-            factory(req, fut)
+            factory(req, fut, loop=self.loop)
             sess = yield from fut
             self.assertFalse(sess.new)
             self.assertEqual(sess, {'foo': 'bar'})

@@ -122,7 +122,7 @@ class Request:
         if self._session_fut is None:
             self._session_fut = fut = asyncio.Future(loop=self._loop)
             if self._session_factory is not None:
-                self._session_factory(self, fut)
+                self._session_factory(self, fut, loop=self._loop)
             else:
                 fut.set_result(None)
         return self._session_fut

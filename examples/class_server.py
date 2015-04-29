@@ -21,10 +21,10 @@ class App(aiorest.RESTServer):
 def main():
     loop = asyncio.get_event_loop()
 
-    server = App(hostname='127.0.0.1', loop=loop)
+    server = App(hostname='127.0.0.1')
 
     srv = loop.run_until_complete(loop.create_server(
-        server.make_handler, '127.0.0.1', 8080))
+        server.make_handler(loop=loop), '127.0.0.1', 8080))
 
     @asyncio.coroutine
     def query():

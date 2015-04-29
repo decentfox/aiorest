@@ -63,12 +63,10 @@ class CookieSessionTests(unittest.TestCase):
         session_factory = CookieSessionFactory(secret_key=b'secret',
                                                cookie_name='test_cookie',
                                                dumps=json.dumps,
-                                               loads=json.loads,
-                                               loop=self.loop)
+                                               loads=json.loads)
         self.server = RESTServer(debug=True, keep_alive=75,
                                  hostname='localhost',
-                                 session_factory=session_factory,
-                                 loop=self.loop)
+                                 session_factory=session_factory)
         rest = REST(self)
 
         self.server.add_url('GET', '/init', rest.init_session)
@@ -82,7 +80,7 @@ class CookieSessionTests(unittest.TestCase):
     @contextlib.contextmanager
     def run_server(self):
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         sock = next(iter(srv.sockets))
         host, port = sock.getsockname()

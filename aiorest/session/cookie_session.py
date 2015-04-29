@@ -17,8 +17,7 @@ __all__ = [
 def CookieSessionFactory(loads, dumps, secret_key, cookie_name,
                          session_max_age=None,
                          domain=None, max_age=None, path=None,
-                         secure=None, httponly=None,
-                         *, loop=None):
+                         secure=None, httponly=None):
     sid_store = SecureCookie(secret_key, cookie_name,
                              session_max_age=session_max_age,
                              domain=domain, max_age=max_age,
@@ -26,8 +25,7 @@ def CookieSessionFactory(loads, dumps, secret_key, cookie_name,
                              httponly=httponly)
     backend = ClientSideBackend(loads, dumps)
     return create_session_factory(session_id_store=sid_store,
-                                  backend_store=backend,
-                                  loop=loop)
+                                  backend_store=backend)
 
 
 class ClientSideBackend(SessionBackendStore):

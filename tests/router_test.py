@@ -12,7 +12,7 @@ class RouterTests(unittest.TestCase):
     def setUp(self):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(None)
-        self.server = RESTServer(hostname='example.com', loop=self.loop)
+        self.server = RESTServer(hostname='example.com')
 
     def tearDown(self):
         self.loop.close()

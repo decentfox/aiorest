@@ -35,13 +35,10 @@ class RESTServer:
     }
 
     def __init__(self, *, hostname, session_factory=None,
-                 enable_cors=False, loop=None,
+                 enable_cors=False,
                  identity_policy=None, auth_policy=None, **kwargs):
         assert session_factory is None or callable(session_factory), \
             "session_factory must be None or callable (coroutine) function"
-        if loop is None:
-            loop = asyncio.get_event_loop()
-        self._loop = loop
         super().__init__()
         self.hostname = hostname
         self.session_factory = session_factory
@@ -55,13 +52,12 @@ class RESTServer:
         self._kwargs = kwargs
         self._urls = []
 
-    def make_handler(self):
-        return RESTRequestHandler(self, hostname=self.hostname,
-                                  session_factory=self.session_factory,
-                                  loop=self._loop,
-                                  identity_policy=self._identity_policy,
-                                  auth_policy=self._auth_policy,
-                                  **self._kwargs)
+    def make_handler(self, loop=None):
+        return lambda: RESTRequestHandler(
+            self, hostname=self.hostname, session_factory=self.session_factory,
+            loop=loop, identity_policy=self._identity_policy,
+            auth_policy=self._auth_policy,
+            **self._kwargs)
 
     @property
     def cors_enabled(self):

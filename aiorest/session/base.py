@@ -62,19 +62,16 @@ class _SessionFactory:
     """Session factory.
     """
 
-    def __init__(self, *, session_id_store, backend_store, loop=None):
-        if loop is None:
-            loop = asyncio.get_event_loop()
-        self._loop = loop
+    def __init__(self, *, session_id_store, backend_store):
         assert isinstance(session_id_store, SessionIdStore), session_id_store
         assert isinstance(backend_store, SessionBackendStore), backend_store
         self._sid_store = session_id_store
         self._backend = backend_store
 
-    def __call__(self, request, fut):
+    def __call__(self, request, fut, loop=None):
         """Instantiate Session object.
         """
-        return asyncio.Task(self._load(request, fut), loop=self._loop)
+        return asyncio.Task(self._load(request, fut), loop=loop)
 
     @asyncio.coroutine
     def _load(self, request, fut):
@@ -108,12 +105,11 @@ class _SessionFactory:
         self._sid_store.put_session_id(request, session_id)
 
 
-def create_session_factory(session_id_store, backend_store, *, loop=None):
+def create_session_factory(session_id_store, backend_store):
     """Creates new session factory.
 
     Create new session factory from two storage:
     session_id_store and backend_store.
     """
     return _SessionFactory(session_id_store=session_id_store,
-                           backend_store=backend_store,
-                           loop=loop)
+                           backend_store=backend_store)

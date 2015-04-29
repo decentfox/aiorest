@@ -35,17 +35,15 @@ def main():
 
     session_factory = RedisSessionFactory(redis,
                                           secret_key=b'secret',
-                                          cookie_name='test_cookie',
-                                          loop=loop)
+                                          cookie_name='test_cookie')
 
     server = aiorest.RESTServer(hostname='127.0.0.1', keep_alive=75,
-                                session_factory=session_factory,
-                                loop=loop)
+                                session_factory=session_factory)
 
     server.add_url('GET', '/count', handler.counter)
 
     srv = loop.run_until_complete(loop.create_server(
-        server.make_handler, '127.0.0.1', 8080))
+        server.make_handler(loop=loop), '127.0.0.1', 8080))
 
     @asyncio.coroutine
     def query():

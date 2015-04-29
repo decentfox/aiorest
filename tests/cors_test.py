@@ -24,8 +24,7 @@ class CorsTests(unittest.TestCase):
         self.loop = asyncio.new_event_loop()
         asyncio.set_event_loop(None)
         self.server = RESTServer(debug=True, hostname='localhost',
-                                 enable_cors=True,
-                                 loop=self.loop)
+                                 enable_cors=True)
         add_url = self.server.add_url
 
         rest = REST(self)
@@ -41,7 +40,7 @@ class CorsTests(unittest.TestCase):
         self.assertTrue(self.server.cors_enabled)
 
         srv = self.loop.run_until_complete(self.loop.create_server(
-            self.server.make_handler,
+            self.server.make_handler(loop=self.loop),
             '127.0.0.1', 0))
         self.assertEqual(len(srv.sockets), 1)
         sock = next(iter(srv.sockets))

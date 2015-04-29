@@ -82,12 +82,11 @@ Simple "hello world" REST server would look like this::
         return {'hello': 'world'}
 
     loop = asyncio.get_event_loop()
-    srv = aiorest.RESTServer(hostname='127.0.0.1',
-                                loop=loop)
+    srv = aiorest.RESTServer(hostname='127.0.0.1')
 
     srv.add_url('GET', '/hello', hello)
     server = loop.run_until_complete(loop.create_server(
-        srv.make_handler, '127.0.0.1', 8080))
+        srv.make_handler(loop=loop), '127.0.0.1', 8080))
 
     try:
         loop.run_forever()

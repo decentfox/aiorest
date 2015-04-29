@@ -64,14 +64,14 @@ def main():
     auth_policy = DictionaryAuthorizationPolicy({'chris': ('read',)})
 
     server = aiorest.RESTServer(
-        hostname='127.0.0.1', loop=loop,
+        hostname='127.0.0.1',
         identity_policy=identity_policy,
         auth_policy=auth_policy
     )
     server.add_url('GET', '/auth/{permission}', handler)
 
     srv = loop.run_until_complete(loop.create_server(
-        server.make_handler, '127.0.0.1', 8080))
+        server.make_handler(loop=loop), '127.0.0.1', 8080))
 
     @asyncio.coroutine
     def query():

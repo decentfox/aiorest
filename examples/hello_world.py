@@ -15,12 +15,12 @@ def say_hello(request):
 def main():
     loop = asyncio.get_event_loop()
 
-    server = aiorest.RESTServer(hostname='127.0.0.1', loop=loop)
+    server = aiorest.RESTServer(hostname='127.0.0.1')
     server.add_url('GET', '/hello-world', handler)
     server.add_url('GET', '/hello/{name}', say_hello)
 
     srv = loop.run_until_complete(loop.create_server(
-        server.make_handler, '127.0.0.1', 8080))
+        server.make_handler(loop=loop), '127.0.0.1', 8080))
 
     @asyncio.coroutine
     def query():
